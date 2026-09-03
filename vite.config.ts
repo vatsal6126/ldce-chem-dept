@@ -4,5 +4,6 @@ import tailwindcss from '@tailwindcss/vite';
 import { viteSingleFile } from 'vite-plugin-singlefile';
 
 export default defineConfig({
+  base: '/ldce-chem-dept/',
   plugins: [react(), tailwindcss(), viteSingleFile()],
 });
