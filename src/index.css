@@ -666,7 +666,7 @@ footer {
         transition-duration: 0.01ms !important;
     }
 }
-/* FIXED TOP-CENTER HEADER CONTAINER */
+/* ABSOLUTE FIXED CONTAINER LOCKING NAVBAR TO DEAD CENTER */
 .glass-dock-header {
     position: fixed !important;
     top: 1.2rem !important;
@@ -675,11 +675,13 @@ footer {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    z-index: 99999 !important;
+    z-index: 999999 !important;
     pointer-events: none;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* COMPACT GLASS DOCK WRAPPER */
+/* COMPACT GLASS DOCK WRAPPER WITH GPU HARDWARE ACCELERATION */
 .glass-dock-wrapper {
     pointer-events: auto;
     position: relative;
@@ -687,19 +689,25 @@ footer {
     align-items: center;
     justify-content: center;
     width: auto !important;
+    box-sizing: border-box;
     padding: 6px 10px;
     border-radius: 999px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(54, 34, 15, 0.15), 0 0 15px rgba(140, 88, 34, 0.1);
-    will-change: transform;
-    transform-origin: center center;
+    
+    /* Hardware Composite Layers (Fixes Mobile Lag & Oval Stretching) */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform, width, height;
+    -webkit-tap-highlight-color: transparent;
     cursor: pointer;
-    /* CSS transitions removed here to let Framer Motion manage physics on GPU */
 }
 
 .glass-dock-wrapper.collapsed {
     padding: 6px;
-    border-radius: 50%;
+    border-radius: 999px !important; /* Prevents squashed oval shape on mobile */
+    width: 50px !important;
+    height: 50px !important;
 }
 
 .glass-dock-wrapper .liquidGlass-effect {
@@ -736,6 +744,7 @@ footer {
     z-index: 3;
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 .glass-dock__options {
@@ -774,6 +783,8 @@ footer {
     border: none;
     background: transparent;
     border-radius: 999px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .glass-dock__hamburger-btn {
@@ -783,11 +794,9 @@ footer {
 
 .glass-dock__icon {
     color: var(--text-muted);
-    transition: color 0.25s ease, transform 0.25s var(--ease-out-expo);
+    transition: color 0.2s ease;
 }
 
-.glass-dock__item.active .glass-dock__icon,
-.glass-dock__item:hover .glass-dock__icon {
+.glass-dock__item.active .glass-dock__icon {
     color: var(--primary);
-    transform: scale(1.08);
 }
