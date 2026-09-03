@@ -216,8 +216,8 @@ nav {
     position: absolute;
     z-index: 0;
     inset: 0;
-    backdrop-filter: blur(1px);
-    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1.55px);
+    -webkit-backdrop-filter: blur(1.55px);
     filter: url(#glass-distortion);
     overflow: hidden;
     border-radius: 2.5rem;
