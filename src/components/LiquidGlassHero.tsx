@@ -1,19 +1,29 @@
 import React, { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+
 
 export const LiquidGlassHero: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
+  const idleRafRef = useRef<number | null>(null);
 
-  // Manual High-Performance Physics Engine (forces GPU redraws on mobile)
-  const fireJello = () => {
+  // High-Performance Physics Engine — big, satisfying jello
+  const fireJello = (strength = 1.0) => {
     const el = heroRef.current;
     if (!el) return;
 
+    // Cancel any idle animation
+    if (idleRafRef.current) {
+      cancelAnimationFrame(idleRafRef.current);
+      idleRafRef.current = null;
+    }
+
     let scaleX = 1, scaleY = 1, skewY = 0;
-    let vScaleX = -0.12, vScaleY = 0.2, vSkewY = 0.4;
+    // Tripled initial kick — very visible wobble
+    let vScaleX = -0.38 * strength;
+    let vScaleY = 0.55 * strength;
+    let vSkewY  = 1.2  * strength;
     let lastT: number | null = null;
-    const K = 90; // Spring tension
-    const D = 6;  // Spring damping
+    const K = 70; // lower = slower / springier
+    const D = 4.5; // lower = more oscillations before settling
 
     const tick = (ts: number) => {
       if (!lastT) lastT = ts;
@@ -22,68 +32,95 @@ export const LiquidGlassHero: React.FC = () => {
 
       const axX = -K * (scaleX - 1) - D * vScaleX;
       vScaleX += axX * dt;
-      scaleX += vScaleX * dt;
+      scaleX  += vScaleX * dt;
 
       const axY = -K * (scaleY - 1) - D * vScaleY;
       vScaleY += axY * dt;
-      scaleY += vScaleY * dt;
+      scaleY  += vScaleY * dt;
 
       const axS = -K * skewY - D * vSkewY;
       vSkewY += axS * dt;
-      skewY += vSkewY * dt;
+      skewY  += vSkewY * dt;
 
-      // Force 3D hardware acceleration composite layer 
       el.style.transform = `translateZ(0) scaleX(${scaleX.toFixed(4)}) scaleY(${scaleY.toFixed(4)}) skewY(${skewY.toFixed(3)}deg)`;
 
-      if (Math.abs(vScaleX) > 0.001 || Math.abs(scaleX - 1) > 0.001 || Math.abs(vSkewY) > 0.01) {
-        requestAnimationFrame(tick);
+      if (
+        Math.abs(vScaleX) > 0.0005 ||
+        Math.abs(scaleX - 1) > 0.0005 ||
+        Math.abs(vSkewY) > 0.005 ||
+        Math.abs(skewY) > 0.005
+      ) {
+        idleRafRef.current = requestAnimationFrame(tick);
       } else {
         el.style.transform = 'translateZ(0)';
+        idleRafRef.current = null;
+        startIdleBreath(); // resume gentle idle after jello settles
       }
     };
-    requestAnimationFrame(tick);
+    idleRafRef.current = requestAnimationFrame(tick);
   };
 
-  // Bind to scrolling so it wiggles when the user swipes on their phone
+  // Gentle continuous "breathing" idle — keeps it alive when static
+  const startIdleBreath = () => {
+    const el = heroRef.current;
+    if (!el || idleRafRef.current) return;
+
+    const start = performance.now();
+    const breathTick = (ts: number) => {
+      const t = (ts - start) / 1000;
+      const s = 1 + Math.sin(t * 0.9) * 0.008;  // very subtle
+      const sk = Math.sin(t * 1.1) * 0.06;        // tiny skew oscillation
+      el.style.transform = `translateZ(0) scaleX(${s.toFixed(5)}) scaleY(${(2 - s).toFixed(5)}) skewY(${sk.toFixed(4)}deg)`;
+      idleRafRef.current = requestAnimationFrame(breathTick);
+    };
+    idleRafRef.current = requestAnimationFrame(breathTick);
+  };
+
   useEffect(() => {
+    // Kick a big jello on load so users notice it immediately
+    const timeout = setTimeout(() => fireJello(1.2), 350);
+
     let lastScroll = window.scrollY;
-    
     const handleScroll = () => {
-      if (Math.abs(window.scrollY - lastScroll) > 60) {
-        fireJello();
+      if (Math.abs(window.scrollY - lastScroll) > 40) {
+        fireJello(0.8);
         lastScroll = window.scrollY;
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('scroll', handleScroll);
+      if (idleRafRef.current) cancelAnimationFrame(idleRafRef.current);
+    };
   }, []);
 
   return (
     <section className="hero">
-      <div 
+      <div
         ref={heroRef}
         className="liquidGlass-wrapper hero-card"
         style={{ willChange: 'transform' }}
-        onMouseEnter={fireJello}
-        onTouchStart={fireJello} /* Triggers instantly on mobile tap */
-        onClick={fireJello}
+        onMouseEnter={() => fireJello(0.85)}
+        onTouchStart={() => fireJello(1.0)}
+        onClick={() => fireJello(1.0)}
       >
         <div className="liquidGlass-effect"></div>
         <div className="liquidGlass-tint"></div>
         <div className="liquidGlass-shine"></div>
-        
+
         <div className="liquidGlass-text">
-          <img src="./chemicallogo.png" alt="Chemical Engineering Logo" className="hero-logo" />
+          <img src="./images/chemicallogo.png" alt="Chemical Engineering Logo" className="hero-logo" />
           <h1>Department of<br /><span>Chemical Engineering</span></h1>
           <p>L.D. College of Engineering, Ahmedabad</p>
           <div className="hero-subtext">
             Pioneering chemical process education, industrial safety, and sustainable innovation for over 50 years.
           </div>
-          
+
           <div className="hero-buttons">
-            <a href="#/courses" className="btn-primary">Explore Programs &rarr;</a>
-            <a href="#/notices" className="btn-secondary">Latest Notices</a>
+            <a href="#/courses" className="btn btn-primary">Explore Programs →</a>
+            <a href="#/notices" className="btn btn-outline">Latest Notices</a>
           </div>
         </div>
       </div>
