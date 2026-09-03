@@ -679,20 +679,6 @@ footer {
     pointer-events: none;
 }
 
-/* ABSOLUTE FIXED CONTAINER LOCKING NAVBAR TO DEAD CENTER */
-.glass-dock-header {
-    position: fixed !important;
-    top: 1.2rem !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 999999 !important;
-    pointer-events: none;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: auto !important;
-    height: auto !important;
-}
-
 /* COMPACT GLASS DOCK WRAPPER */
 .glass-dock-wrapper {
     pointer-events: auto;
@@ -701,15 +687,14 @@ footer {
     align-items: center;
     justify-content: center;
     width: auto !important;
-    box-sizing: border-box;
     padding: 6px 10px;
     border-radius: 999px;
     overflow: hidden;
     box-shadow: 0 10px 25px rgba(54, 34, 15, 0.15), 0 0 15px rgba(140, 88, 34, 0.1);
     will-change: transform;
     transform-origin: center center;
-    transition: padding 0.35s var(--ease-out-expo);
     cursor: pointer;
+    /* CSS transitions removed here to let Framer Motion manage physics on GPU */
 }
 
 .glass-dock-wrapper.collapsed {
@@ -758,7 +743,7 @@ footer {
     display: flex;
     align-items: center;
     gap: 0;
-    width: 220px; /* 5 icons * 44px strictly set */
+    width: 220px;
     height: 38px;
 }
 
@@ -773,7 +758,6 @@ footer {
     border: 1px solid rgba(140, 88, 34, 0.3);
     border-radius: 999px;
     z-index: 0;
-    transition: transform 0.35s var(--ease-out-expo);
     pointer-events: none;
 }
 
@@ -806,13 +790,4 @@ footer {
 .glass-dock__item:hover .glass-dock__icon {
     color: var(--primary);
     transform: scale(1.08);
-}
-
-/* Fix Scrollbar-Induced Layout Jumps */
-html {
-    overflow-y: scroll;
-}
-
-.page-container, .summary-section, .hero {
-    padding-top: 6rem;
 }
