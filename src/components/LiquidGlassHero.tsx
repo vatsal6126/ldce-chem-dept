@@ -74,7 +74,7 @@ export const LiquidGlassHero: React.FC = () => {
         <div className="liquidGlass-shine"></div>
         
         <div className="liquidGlass-text">
-          <img src="chemicallogo.png" alt="Chemical Engineering Logo" className="hero-logo" />
+          <img src="./chemicallogo.png" alt="Chemical Engineering Logo" className="hero-logo" />
           <h1>Department of<br /><span>Chemical Engineering</span></h1>
           <p>L.D. College of Engineering, Ahmedabad</p>
           <div className="hero-subtext">

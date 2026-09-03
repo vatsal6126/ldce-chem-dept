@@ -5,7 +5,6 @@ import type { LucideIcon } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import type { Route } from '../lib/router';
 
-// Shortened labels for clean mobile display
 const NAV_ITEMS: { label: string; path: Route; icon: LucideIcon }[] = [
   { label: 'Home', path: '/', icon: Home },
   { label: 'Courses', path: '/courses', icon: BookOpen },
@@ -45,8 +44,8 @@ export const Navbar: React.FC = () => {
     <header className="glass-dock-header">
       <motion.div
         animate={{
-          width: isCollapsed ? 56 : 320,  /* Widened to fit text */
-          height: isCollapsed ? 56 : 64,  /* Heightened to fit text */
+          width: isCollapsed ? 56 : 320,
+          height: isCollapsed ? 56 : 56,
         }}
         whileTap={{
           scale: [0.95, 1.03, 0.98, 1], 
@@ -90,7 +89,7 @@ export const Navbar: React.FC = () => {
                 {/* Active Sliding Indicator Pill */}
                 <motion.div
                   className="glass-dock__active-slider"
-                  animate={{ x: activeIndex * 60 }} /* Updates distance for new widths */
+                  animate={{ x: activeIndex * 64 }} /* Exactly matches the item width */
                   transition={{
                     type: 'spring',
                     stiffness: 450,
