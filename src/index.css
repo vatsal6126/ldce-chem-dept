@@ -747,51 +747,72 @@ footer {
     align-items: center;
     justify-content: center;
     gap: 0;
-    width: 220px;
-    height: 38px;
+    width: 300px; /* 5 items * 60px */
+    height: 52px;
 }
 
-/* Active Sliding Pill */
+/* Adjusted Slider Pill */
 .glass-dock__active-slider {
     position: absolute;
     top: 0;
     left: 0;
-    width: 44px;
-    height: 38px;
-    background: rgba(140, 88, 34, 0.18);
-    border: 1px solid rgba(140, 88, 34, 0.3);
-    border-radius: 999px;
+    width: 60px;
+    height: 52px;
+    background: rgba(140, 88, 34, 0.15);
+    border: 1px solid rgba(140, 88, 34, 0.25);
+    border-radius: 14px; /* Slightly squarer to match new shape */
     z-index: 0;
     pointer-events: none;
 }
 
-/* Buttons */
-.glass-dock__item, .glass-dock__hamburger-btn {
+/* Item flex-direction updated to column */
+.glass-dock__item {
     position: relative;
     z-index: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 38px;
+    width: 60px;
+    height: 52px;
+    gap: 4px; /* Space between icon and text */
     cursor: pointer;
     border: none;
     background: transparent;
-    border-radius: 999px;
     outline: none;
     -webkit-tap-highlight-color: transparent;
 }
 
 .glass-dock__hamburger-btn {
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .glass-dock__icon {
     color: var(--text-muted);
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.glass-dock__label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
     transition: color 0.2s ease;
 }
 
-.glass-dock__item.active .glass-dock__icon {
+.glass-dock__item.active .glass-dock__icon,
+.glass-dock__item.active .glass-dock__label {
     color: var(--primary);
+}
+
+.glass-dock__item.active .glass-dock__icon {
+    transform: translateY(-1px); /* Gentle lift when active */
 }

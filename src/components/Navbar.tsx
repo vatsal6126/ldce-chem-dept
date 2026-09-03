@@ -5,12 +5,13 @@ import type { LucideIcon } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import type { Route } from '../lib/router';
 
+// Shortened labels for clean mobile display
 const NAV_ITEMS: { label: string; path: Route; icon: LucideIcon }[] = [
-  { label: 'HOME', path: '/', icon: Home },
-  { label: 'COURSE INFO', path: '/courses', icon: BookOpen },
-  { label: 'DEPARTMENT & STAFF', path: '/department', icon: Users },
-  { label: 'EVENTS', path: '/events', icon: Calendar },
-  { label: 'NOTICE BOARD', path: '/notices', icon: Bell },
+  { label: 'Home', path: '/', icon: Home },
+  { label: 'Courses', path: '/courses', icon: BookOpen },
+  { label: 'Staff', path: '/department', icon: Users },
+  { label: 'Events', path: '/events', icon: Calendar },
+  { label: 'Notices', path: '/notices', icon: Bell },
 ];
 
 export const Navbar: React.FC = () => {
@@ -42,19 +43,18 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="glass-dock-header">
-      {/* Explicit pixel width spring animation prevents border-radius distortion and oval shapes */}
       <motion.div
         animate={{
-          width: isCollapsed ? 50 : 240,
-          height: 50,
+          width: isCollapsed ? 56 : 320,  /* Widened to fit text */
+          height: isCollapsed ? 56 : 64,  /* Heightened to fit text */
         }}
         whileTap={{
-          scale: [0.92, 1.05, 0.98, 1], // Mobile-forced Jello Wobble on tap
+          scale: [0.95, 1.03, 0.98, 1], 
         }}
         transition={{
           type: 'spring',
-          stiffness: 320,
-          damping: 14, // Lower damping for strong, noticeable mobile spring bounce
+          stiffness: 350,
+          damping: 16, 
           mass: 0.7,
         }}
         className={`glass-dock-wrapper glass-dock ${isCollapsed ? 'collapsed' : ''}`}
@@ -76,7 +76,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setIsExpanded(true)}
                 aria-label="Open Navigation"
               >
-                <Menu size={20} className="glass-dock__icon" />
+                <Menu size={24} className="glass-dock__icon" />
               </motion.button>
             ) : (
               <motion.div
@@ -90,7 +90,7 @@ export const Navbar: React.FC = () => {
                 {/* Active Sliding Indicator Pill */}
                 <motion.div
                   className="glass-dock__active-slider"
-                  animate={{ x: activeIndex * 44 }}
+                  animate={{ x: activeIndex * 60 }} /* Updates distance for new widths */
                   transition={{
                     type: 'spring',
                     stiffness: 450,
@@ -105,12 +105,13 @@ export const Navbar: React.FC = () => {
                   return (
                     <motion.button
                       key={item.path}
-                      whileTap={{ scale: 0.8 }} // Squishy icon tap response for touch screens
+                      whileTap={{ scale: 0.85 }} 
                       className={`glass-dock__item ${isActive ? 'active' : ''}`}
                       title={item.label}
                       onClick={() => handleSelect(item.path)}
                     >
-                      <Icon size={19} className="glass-dock__icon" />
+                      <Icon size={18} className="glass-dock__icon" />
+                      <span className="glass-dock__label">{item.label}</span>
                     </motion.button>
                   );
                 })}
