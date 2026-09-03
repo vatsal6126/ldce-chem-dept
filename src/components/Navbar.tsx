@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Home, BookOpen, Users, Calendar, Bell, Menu } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { useRouter } from '../lib/router';
@@ -42,14 +42,20 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="glass-dock-header">
-      {/* Container uses Framer Motion layout animation for instant 60fps mobile morphing */}
+      {/* Explicit pixel width spring animation prevents border-radius distortion and oval shapes */}
       <motion.div
-        layout
+        animate={{
+          width: isCollapsed ? 50 : 240,
+          height: 50,
+        }}
+        whileTap={{
+          scale: [0.92, 1.05, 0.98, 1], // Mobile-forced Jello Wobble on tap
+        }}
         transition={{
           type: 'spring',
-          stiffness: 450, // High stiffness for snappy responsiveness on mobile
-          damping: 22,    // Tuned damping for responsive spring bounce without lag
-          mass: 0.6,
+          stiffness: 320,
+          damping: 14, // Lower damping for strong, noticeable mobile spring bounce
+          mass: 0.7,
         }}
         className={`glass-dock-wrapper glass-dock ${isCollapsed ? 'collapsed' : ''}`}
       >
@@ -58,58 +64,59 @@ export const Navbar: React.FC = () => {
         <div className="liquidGlass-shine"></div>
 
         <div className="liquidGlass-text">
-          {isCollapsed ? (
-            <motion.button
-              key="hamburger"
-              layout="position"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              whileTap={{ scale: 0.85 }} // Instant touch feedback on mobile
-              transition={{ duration: 0.15 }}
-              className="glass-dock__hamburger-btn"
-              onClick={() => setIsExpanded(true)}
-              aria-label="Open Navigation"
-            >
-              <Menu size={20} className="glass-dock__icon" />
-            </motion.button>
-          ) : (
-            <motion.div
-              key="nav-options"
-              layout="position"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              className="glass-dock__options"
-            >
-              {/* Active Sliding Indicator Pill */}
+          <AnimatePresence mode="wait">
+            {isCollapsed ? (
+              <motion.button
+                key="hamburger"
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.5 }}
+                transition={{ duration: 0.12 }}
+                className="glass-dock__hamburger-btn"
+                onClick={() => setIsExpanded(true)}
+                aria-label="Open Navigation"
+              >
+                <Menu size={20} className="glass-dock__icon" />
+              </motion.button>
+            ) : (
               <motion.div
-                className="glass-dock__active-slider"
-                animate={{ x: activeIndex * 44 }}
-                transition={{
-                  type: 'spring',
-                  stiffness: 550,
-                  damping: 28,
-                }}
-              />
+                key="nav-options"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15 }}
+                className="glass-dock__options"
+              >
+                {/* Active Sliding Indicator Pill */}
+                <motion.div
+                  className="glass-dock__active-slider"
+                  animate={{ x: activeIndex * 44 }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 450,
+                    damping: 24,
+                  }}
+                />
 
-              {NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentRoute === item.path;
+                {NAV_ITEMS.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = currentRoute === item.path;
 
-                return (
-                  <motion.button
-                    key={item.path}
-                    whileTap={{ scale: 0.88 }} // Active touch squishy feel for every icon
-                    className={`glass-dock__item ${isActive ? 'active' : ''}`}
-                    title={item.label}
-                    onClick={() => handleSelect(item.path)}
-                  >
-                    <Icon size={19} className="glass-dock__icon" />
-                  </motion.button>
-                );
-              })}
-            </motion.div>
-          )}
+                  return (
+                    <motion.button
+                      key={item.path}
+                      whileTap={{ scale: 0.8 }} // Squishy icon tap response for touch screens
+                      className={`glass-dock__item ${isActive ? 'active' : ''}`}
+                      title={item.label}
+                      onClick={() => handleSelect(item.path)}
+                    >
+                      <Icon size={19} className="glass-dock__icon" />
+                    </motion.button>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </header>
