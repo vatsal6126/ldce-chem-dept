@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Route = '/' | '/courses' | '/department' | '/events' | '/notices';
+export type Route = '/' | '/courses' | '/department' | '/events' | '/notices' | '/admin-login' | '/more';
 
 const ROUTE_TITLES: Record<Route, string> = {
   '/': 'Department of Chemical Engineering | LDCE',
@@ -8,6 +8,8 @@ const ROUTE_TITLES: Record<Route, string> = {
   '/department': 'Department & Staff | Department of Chemical Engineering',
   '/events': 'Events & Activities | Department of Chemical Engineering',
   '/notices': 'Notice Board | Department of Chemical Engineering',
+  '/admin-login': 'Administrator Login | Department of Chemical Engineering',
+  '/more': 'Admin CMS & Storage | Department of Chemical Engineering',
 };
 
 function parseHash(): Route {

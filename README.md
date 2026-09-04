@@ -1,5 +1,11 @@
 # React + TypeScript + Vite
 
+## Administrator access
+
+The public navigation does not show the CMS. Open `#/admin-login` directly to sign in, then manage notices, events, and faculty records from the protected editor. Set `VITE_ADMIN_USERNAME` and `VITE_ADMIN_PASSWORD` in a local `.env` file before building; do not commit that file.
+
+The current site is a static client-side application. The login protects the editor UI and content actions in the browser, but a production deployment that requires tamper-proof authorization must move authentication and content storage to a server or managed backend with access rules.
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

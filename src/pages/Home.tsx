@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ArrowRight, BookOpen, Users, Calendar, Bell } from 'lucide-react';
 import { animate, useInView, useReducedMotion } from 'framer-motion';
 import { LiquidGlassHero } from '../components/LiquidGlassHero';
+import { LiquidGlassCard } from '../components/LiquidGlassCard';
 import { Reveal } from '../components/Reveal';
 import { SectionHeader } from '../components/SectionHeader';
 import { STATS } from '../data/content';
@@ -64,10 +65,10 @@ const StatItem: React.FC<{ value: string; label: string }> = ({ value, label }) 
   }, [isInView, parsed, shouldReduceMotion]);
 
   return (
-    <div className="stat-item">
+    <LiquidGlassCard className="stat-item" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
       <h3 ref={ref}>{value}</h3>
       <p>{label}</p>
-    </div>
+    </LiquidGlassCard>
   );
 };
 
@@ -96,7 +97,7 @@ export const Home: React.FC = () => {
             const Icon = item.icon;
             return (
               <Reveal key={item.title} delay={i * 0.08} style={{ height: '100%' }}>
-                <div className="summary-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <LiquidGlassCard className="summary-card" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                   <Icon className="card-icon" size={24} />
                   <h3>{item.title}</h3>
                   <p style={{ flexGrow: 1 }}>{item.desc}</p>
@@ -110,7 +111,7 @@ export const Home: React.FC = () => {
                   >
                     {item.linkText} <ArrowRight size={14} />
                   </a>
-                </div>
+                </LiquidGlassCard>
               </Reveal>
             );
           })}

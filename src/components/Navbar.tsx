@@ -5,6 +5,8 @@ import type { LucideIcon } from 'lucide-react';
 import { useRouter } from '../lib/router';
 import type { Route } from '../lib/router';
 
+const ITEM_WIDTH = 62;
+
 const NAV_ITEMS: { label: string; path: Route; icon: LucideIcon }[] = [
   { label: 'Home', path: '/', icon: Home },
   { label: 'Courses', path: '/courses', icon: BookOpen },
@@ -34,6 +36,7 @@ export const Navbar: React.FC = () => {
 
   const activeIndex = NAV_ITEMS.findIndex((item) => item.path === currentRoute);
   const isCollapsed = isScrolled && !isExpanded;
+  const totalDockWidth = NAV_ITEMS.length * ITEM_WIDTH;
 
   const handleSelect = (path: Route) => {
     navigate(path);
@@ -44,7 +47,7 @@ export const Navbar: React.FC = () => {
     <header className="glass-dock-header">
       <motion.div
         animate={{
-          width: isCollapsed ? 56 : 320,
+          width: isCollapsed ? 56 : totalDockWidth,
           height: isCollapsed ? 56 : 56,
         }}
         whileTap={{
@@ -85,17 +88,21 @@ export const Navbar: React.FC = () => {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.15 }}
                 className="glass-dock__options"
+                style={{ width: `${totalDockWidth}px` }}
               >
                 {/* Active Sliding Indicator Pill */}
-                <motion.div
-                  className="glass-dock__active-slider"
-                  animate={{ x: activeIndex * 64 }} /* Exactly matches the item width */
-                  transition={{
-                    type: 'spring',
-                    stiffness: 450,
-                    damping: 24,
-                  }}
-                />
+                {activeIndex >= 0 && (
+                  <motion.div
+                    className="glass-dock__active-slider"
+                    style={{ width: `${ITEM_WIDTH}px` }}
+                    animate={{ x: activeIndex * ITEM_WIDTH }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 450,
+                      damping: 24,
+                    }}
+                  />
+                )}
 
                 {NAV_ITEMS.map((item) => {
                   const Icon = item.icon;
@@ -107,6 +114,9 @@ export const Navbar: React.FC = () => {
                       whileTap={{ scale: 0.85 }} 
                       className={`glass-dock__item ${isActive ? 'active' : ''}`}
                       title={item.label}
+                      aria-label={item.label}
+                      aria-current={isActive ? 'page' : undefined}
+                      style={{ width: `${ITEM_WIDTH}px` }}
                       onClick={() => handleSelect(item.path)}
                     >
                       <Icon size={18} className="glass-dock__icon" />
