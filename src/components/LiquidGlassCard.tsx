@@ -24,6 +24,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   const fireJello = (strength = 1.0) => {
     const el = cardRef.current;
     if (!el) return;
+    el.style.willChange = 'transform';
 
     // Cancel any idle animation
     if (frameRef.current) {
@@ -67,47 +68,18 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
         frameRef.current = requestAnimationFrame(tick);
       } else {
         el.style.transform = 'translateZ(0)';
+        el.style.willChange = 'auto';
         frameRef.current = null;
-        startIdleBreath();
       }
     };
 
     frameRef.current = requestAnimationFrame(tick);
   };
 
-  // Gentle continuous "breathing" idle — keeps it alive when static
-  const startIdleBreath = () => {
-    const el = cardRef.current;
-    if (!el || frameRef.current) return;
-
-    const start = performance.now();
-    const breathTick = (ts: number) => {
-      const t = (ts - start) / 1000;
-      const s = 1 + Math.sin(t * 0.9) * 0.008;
-      const sk = Math.sin(t * 1.1) * 0.06;
-      el.style.transform = `translateZ(0) scaleX(${s.toFixed(5)}) scaleY(${(2 - s).toFixed(5)}) skewY(${sk.toFixed(4)}deg)`;
-      frameRef.current = requestAnimationFrame(breathTick);
-    };
-    frameRef.current = requestAnimationFrame(breathTick);
-  };
-
   useEffect(() => {
-    // Kick a big jello on load so users notice it immediately
-    const timeout = setTimeout(() => fireJello(1.2), 350);
-
-    let lastScroll = window.scrollY;
-    const handleScroll = () => {
-      if (Math.abs(window.scrollY - lastScroll) > 40) {
-        fireJello(0.8);
-        lastScroll = window.scrollY;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      clearTimeout(timeout);
-      window.removeEventListener('scroll', handleScroll);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      if (cardRef.current) cardRef.current.style.willChange = 'auto';
     };
   }, []);
 
@@ -115,7 +87,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
     <div
       ref={cardRef}
       className={`liquidGlass-wrapper liquidGlass-card ${className}`}
-      style={{ willChange: 'transform', ...style }}
+      style={style}
       onMouseEnter={() => fireJello(0.85)}
       onTouchStart={() => fireJello(1.0)}
 onClick={() => {
