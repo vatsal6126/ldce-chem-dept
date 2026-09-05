@@ -14,11 +14,9 @@ import { Reveal } from '../components/Reveal';
 import { SectionHeader } from '../components/SectionHeader';
 import { useContentStore } from '../lib/store';
 import { uploadFileToStorage } from '../lib/fileUpload';
-import { logoutAdminSession, changeAdminCredentials } from '../lib/auth';
 import { useRouter } from '../lib/router';
-import { Shield } from 'lucide-react';
 
-type Tab = 'notices' | 'events' | 'faculty' | 'security';
+type Tab = 'notices' | 'events' | 'faculty';
 
 export const More: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('notices');
@@ -61,14 +59,6 @@ export const More: React.FC = () => {
   const [facultyExp, setFacultyExp] = useState('5+ Years');
   const [facultyImgUrl, setFacultyImgUrl] = useState('');
   const [uploadingFacultyImg, setUploadingFacultyImg] = useState(false);
-
-  // Security Form State
-  const [secCurrentPw, setSecCurrentPw] = useState('');
-  const [secNewUsername, setSecNewUsername] = useState('');
-  const [secNewPw, setSecNewPw] = useState('');
-  const [secConfirmPw, setSecConfirmPw] = useState('');
-  const [secError, setSecError] = useState('');
-  const [secSuccess, setSecSuccess] = useState('');
 
   // Notice Handlers
   const handleNoticeFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +169,6 @@ export const More: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logoutAdminSession();
     navigate('/admin-login');
   };
 
@@ -225,29 +214,6 @@ export const More: React.FC = () => {
     setActiveTab('faculty');
   };
 
-  const handleChangeCredentials = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSecError('');
-    setSecSuccess('');
-
-    if (secNewPw !== secConfirmPw) {
-      setSecError('New password and confirmation do not match.');
-      return;
-    }
-
-    const result = changeAdminCredentials(secCurrentPw, secNewUsername, secNewPw);
-    if (!result.success) {
-      setSecError(result.error || 'Failed to change credentials.');
-      return;
-    }
-
-    setSecSuccess('Credentials updated successfully! Use your new credentials next time you log in.');
-    setSecCurrentPw('');
-    setSecNewUsername('');
-    setSecNewPw('');
-    setSecConfirmPw('');
-  };
-
   return (
     <main className="page-container admin-cms-container">
       <SectionHeader
@@ -279,12 +245,6 @@ export const More: React.FC = () => {
           onClick={() => setActiveTab('faculty')}
         >
           <Users size={15} /> Faculty Directory
-        </button>
-        <button
-          className={`admin-tab-btn ${activeTab === 'security' ? 'active' : ''}`}
-          onClick={() => setActiveTab('security')}
-        >
-          <Shield size={15} /> Security
         </button>
       </div>
 
@@ -691,82 +651,6 @@ export const More: React.FC = () => {
         </Reveal>
       )}
 
-     {/* TAB 4: SECURITY */}
-      {activeTab === 'security' && (
-        <Reveal>
-          <div className="admin-grid-layout">
-            <div className="content-card admin-form-card">
-              <h3>
-                <Shield size={18} className="inline-icon" /> Change Admin Credentials
-              </h3>
-              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                Update your admin username and password. You'll need to use the new credentials next time you log in.
-              </p>
-
-              {secError && <div className="admin-alert error" style={{ marginBottom: '1rem' }}>{secError}</div>}
-              {secSuccess && <div className="admin-alert success" style={{ marginBottom: '1rem' }}>{secSuccess}</div>}
-
-              <form onSubmit={handleChangeCredentials} className="admin-form">
-                <div className="form-group">
-                  <label>Current Password *</label>
-                  <input
-                    type="password"
-                    required
-                    placeholder="Enter your current password"
-                    value={secCurrentPw}
-                    onChange={(e) => setSecCurrentPw(e.target.value)}
-                    className="admin-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>New Username *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter new admin username"
-                    value={secNewUsername}
-                    onChange={(e) => setSecNewUsername(e.target.value)}
-                    className="admin-input"
-                  />
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>New Password *</label>
-                    <input
-                      type="password"
-                      required
-                      minLength={4}
-                      placeholder="Min 4 characters"
-                      value={secNewPw}
-                      onChange={(e) => setSecNewPw(e.target.value)}
-                      className="admin-input"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>Confirm New Password *</label>
-                    <input
-                      type="password"
-                      required
-                      minLength={4}
-                      placeholder="Re-enter new password"
-                      value={secConfirmPw}
-                      onChange={(e) => setSecConfirmPw(e.target.value)}
-                      className="admin-input"
-                    />
-                  </div>
-                </div>
-
-                <button type="submit" className="btn btn-primary" style={{ marginTop: '0.5rem' }}>
-                  Update Credentials
-                </button>
-              </form>
-            </div>
-
-          </div>
-        </Reveal>
-      )}
     </main>
   );
 };

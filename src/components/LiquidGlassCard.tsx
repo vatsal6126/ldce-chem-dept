@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface LiquidGlassCardProps {
   children: React.ReactNode;
@@ -19,6 +19,7 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<number | null>(null);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 992px)').matches);
 
   // High-Performance Physics Engine — exact same as hero jello
   const fireJello = (strength = 1.0) => {
@@ -77,7 +78,12 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
   };
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 992px)');
+    const handleViewportChange = () => setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleViewportChange);
+
     return () => {
+      mediaQuery.removeEventListener('change', handleViewportChange);
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       if (cardRef.current) cardRef.current.style.willChange = 'auto';
     };
@@ -88,11 +94,15 @@ export const LiquidGlassCard: React.FC<LiquidGlassCardProps> = ({
       ref={cardRef}
       className={`liquidGlass-wrapper liquidGlass-card ${className}`}
       style={style}
-      onMouseEnter={() => fireJello(0.85)}
-      onTouchStart={() => fireJello(1.0)}
+onMouseEnter={() => {
+  if (!isMobile) fireJello(0.85);
+}}
+onTouchStart={() => {
+  if (!isMobile) fireJello(1.0);
+}}
 onClick={() => {
-        fireJello(1.0);
-        onClick?.();
+  fireJello(1.0);
+  onClick?.();
       }}
       onKeyDown={(event) => {
         if (onClick && (event.key === 'Enter' || event.key === ' ')) {

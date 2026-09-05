@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 
 export const LiquidGlassHero: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
   const idleRafRef = useRef<number | null>(null);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 992px)').matches);
 
   // High-Performance Physics Engine — big, satisfying jello
   const fireJello = (strength = 1.0) => {
@@ -77,24 +78,29 @@ export const LiquidGlassHero: React.FC = () => {
   };
 
   useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 992px)');
+    const handleViewportChange = () => setIsMobile(mediaQuery.matches);
+    mediaQuery.addEventListener('change', handleViewportChange);
+
     // Kick a big jello on load so users notice it immediately
-    const timeout = setTimeout(() => fireJello(1.2), 350);
+    const timeout = isMobile ? null : setTimeout(() => fireJello(1.2), 350);
 
     let lastScroll = window.scrollY;
     const handleScroll = () => {
-      if (Math.abs(window.scrollY - lastScroll) > 40) {
+      if (!isMobile && Math.abs(window.scrollY - lastScroll) > 40) {
         fireJello(0.8);
         lastScroll = window.scrollY;
       }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    if (!isMobile) window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      clearTimeout(timeout);
+      if (timeout) clearTimeout(timeout);
+      mediaQuery.removeEventListener('change', handleViewportChange);
       window.removeEventListener('scroll', handleScroll);
       if (idleRafRef.current) cancelAnimationFrame(idleRafRef.current);
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <section className="hero">
@@ -102,8 +108,12 @@ export const LiquidGlassHero: React.FC = () => {
         ref={heroRef}
         className="liquidGlass-wrapper hero-card"
         style={{ willChange: 'transform' }}
-        onMouseEnter={() => fireJello(0.85)}
-        onTouchStart={() => fireJello(1.0)}
+        onMouseEnter={() => {
+          if (!isMobile) fireJello(0.85);
+        }}
+        onTouchStart={() => {
+          if (!isMobile) fireJello(1.0);
+        }}
         onClick={() => fireJello(1.0)}
       >
         <div className="liquidGlass-effect"></div>

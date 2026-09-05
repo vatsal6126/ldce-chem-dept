@@ -13,7 +13,6 @@ import { Home } from './pages/Home';
 import { Notices } from './pages/Notices';
 import { More } from './pages/More';
 import { AdminLogin } from './pages/AdminLogin';
-import { isAdminAuthenticated } from './lib/auth';
 
 const PAGES: Record<Route, React.ComponentType> = {
   '/': Home,
@@ -30,7 +29,7 @@ const MainContent: React.FC = () => {
   const Component = PAGES[currentRoute];
   const shouldReduceMotion = useReducedMotion();
 
-  const requiresLogin = currentRoute === '/more' && !isAdminAuthenticated();
+  const requiresLogin = currentRoute === '/more';
 
   useEffect(() => {
     if (requiresLogin) navigate('/admin-login');
